@@ -57,31 +57,21 @@ void tcp_server(uint16_t port) {
   while (true) {
     std::cout << timestamped("TCP") << "Server waiting for connections..." << std::endl;
 
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
-      perror("accept");
-      continue;
-    }
+      if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+          perror("accept");
+          continue;
+      }
 
-    int read_bytes = read(new_socket, buffer, BUFFER_SIZE);
-    if(read_bytes > 0) {
-      buffer[read_bytes] = '\0'; // Null-terminate the string
-      std::cout << timestamped("TCP") << "Received message from " << inet_ntoa(cliaddr.sin_addr) << buffer << std::endl;
-      const char *message = "Hello from TCP server!";
-      send(new_socket, message, strlen(message), 0);
-    }
-    close(new_socket);
+      int read_bytes = read(new_socket, buffer, BUFFER_SIZE);
+      if(read_bytes > 0) {
+          buffer[read_bytes] = '\0'; // Null-terminate the string
+          std::cout << timestamped("TCP") << "Received message from "
+                    << inet_ntoa(address.sin_addr) << ": " << buffer << std::endl;
+          const char *message = "Hello from TCP server!";
+          send(new_socket, message, strlen(message), 0);
+      }
+      close(new_socket);
   }
-}
-
-
-std::string get_current_timestamp() {
-    using namespace std::chrono;
-    auto now = system_clock::now();
-    auto in_time_t = system_clock::to_time_t(now);
-
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X"); // Format: YYYY-MM-DD HH:mm:ss
-    return ss.str();
 }
 
 void udp_server(uint16_t port) {

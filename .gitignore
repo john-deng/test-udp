@@ -3,5 +3,5 @@ test_udp
 CMakeCache.txt
 *.cmake
 Makefile
-CMakefiles/
 client/cpp-client/CMakeFiles/
+CMakeFiles/
