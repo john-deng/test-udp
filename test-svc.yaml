@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-svc
+  namespace: dev
+spec:
+  ports:
+  - name: udp-8080
+    port: 8080
+    protocol: UDP
+    targetPort: 8080
+    nodePort: 32100
+  - name: http-8080
+    nodePort: 32100
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: test # change it
+    controller: titan-controller
+  type: NodePort
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: ide-test-route
+  namespace: dev
+spec:
+  entryPoints:
+    - web-udp
+  routes:
+    - services:
+        - name: ide-test-svc
+          namespace: dev
+          port: 8080
+
+
